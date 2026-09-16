@@ -59,10 +59,13 @@ sandbox files so the code is reviewable in git.
 - **Aircraft page (page ID 40):** replaced the hardcoded sample-listing
   Elementor block with the `[agh_aircraft]` shortcode and updated the hero
   intro copy to drop the "sample entries" wording.
-- **Menus:** repointed the category/aircraft items in the *Category bar*,
-  *Mega – Parts and gear*, *Mega – Aircraft*, *Footer – Parts and gear* menus
-  to filtered URLs, e.g. `/parts-gear/?cat=headsets#agh-catalog` and
-  `/aircraft/?type=single#agh-aircraft`.
+- **Menus:** repointed the category/aircraft items in the *Primary menu*
+  (the header nav dropdown), *Category bar*, *Mega – Parts and gear*,
+  *Mega – Aircraft* and *Footer – Parts and gear* menus to filtered URLs,
+  e.g. `/parts-gear/?cat=headsets#agh-catalog` and
+  `/aircraft/?type=single#agh-aircraft`. (The header dropdown's submenu items
+  live in the Primary menu — fixed in a follow-up so every category link,
+  including the dropdown, deep-links to its filtered view.)
 - Flushed LiteSpeed full-page cache, Elementor CSS cache and the WP object
   cache so visitors stop getting the stale catalog.
 
