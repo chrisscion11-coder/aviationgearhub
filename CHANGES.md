@@ -65,3 +65,27 @@ sandbox files so the code is reviewable in git.
   `/aircraft/?type=single#agh-aircraft`.
 - Flushed LiteSpeed full-page cache, Elementor CSS cache and the WP object
   cache so visitors stop getting the stale catalog.
+
+## Follow-up: blank pages + dead filters (root cause)
+
+Diagnosed live with a headless browser. Two real defects were found:
+
+1. **Inline script corruption → dead filters.** When the catalog / aircraft
+   JavaScript was returned as part of the shortcode output, WordPress/Elementor
+   HTML-encoded the `&&` operators to `&#038;&#038;`, producing
+   `Invalid or unexpected token` and aborting the whole script — so search,
+   chips, brand/price/sort and Apply did nothing. Fixed by emitting both
+   scripts as **raw `wp_footer` output** (the same path the working category-bar
+   script already used), so they are never texturized. The shortcodes now set a
+   `$GLOBALS` flag and `agh_catalog_footer_js()` / `agh_aircraft_footer_js()`
+   print the scripts in the footer.
+2. **Blank pages.** `agh-enhance.php` sets sections and product cards to
+   `opacity:0` and reveals them on scroll; when the reveal never fired, whole
+   pages stayed invisible. Added a **failsafe** in `agh-enhance.php` that
+   force-reveals every pending element after a short timeout (and on
+   `window.load`), so content can never remain hidden.
+
+Verified in a headless browser against the live site: Parts & Gear shows
+98/98 products (clicking *Avionics* → "Showing 2 of 98"), Aircraft shows
+86/86 real Cessna listings (clicking *Twin-engine* → "Showing 11 of 86"),
+with no page JS errors.

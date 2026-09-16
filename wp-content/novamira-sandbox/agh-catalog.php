@@ -155,6 +155,7 @@ function agh_styles() {
 }
 
 function agh_catalog_shortcode() {
+	$GLOBALS['agh_needs_catalog_js'] = true;
 	$cats  = agh_categories_data();
 	$prods = agh_products_data();
 	$brands = agh_brand_list();
@@ -232,7 +233,16 @@ function agh_catalog_shortcode() {
 		<p class="agh-note">Products shown are representative of current inventory. Part numbers, fitment, approvals and price are confirmed against your aircraft&rsquo;s documentation before anything is quoted. Nothing on this page is an approval or certification claim.</p>
 	</div>
 	</div>
-	<script>
+	<?php
+	return ob_get_clean();
+}
+add_shortcode( 'agh_catalog', 'agh_catalog_shortcode' );
+
+add_action( 'wp_footer', 'agh_catalog_footer_js', 98 );
+function agh_catalog_footer_js() {
+	if ( empty( $GLOBALS['agh_needs_catalog_js'] ) ) { return; }
+	?>
+	<script id="agh-catalog-js">
 	(function(){
 		var grid=document.getElementById('agh-grid');if(!grid)return;
 		var cards=[].slice.call(grid.querySelectorAll('.agh-card'));
@@ -307,9 +317,7 @@ function agh_catalog_shortcode() {
 	})();
 	</script>
 	<?php
-	return ob_get_clean();
 }
-add_shortcode( 'agh_catalog', 'agh_catalog_shortcode' );
 
 function agh_product_shortcode( $atts ) {
 	$atts = shortcode_atts( array( 'slug' => '' ), $atts );

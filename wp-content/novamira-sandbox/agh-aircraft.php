@@ -113,6 +113,7 @@ function agh_aircraft_families() {
 }
 
 function agh_aircraft_shortcode() {
+	$GLOBALS['agh_needs_aircraft_js'] = true;
 	$items = agh_aircraft_data();
 	$fams  = agh_aircraft_families();
 	$types = array( 'single' => 'Single-engine', 'twin' => 'Twin-engine', 'sport' => 'Light sport' );
@@ -179,7 +180,16 @@ function agh_aircraft_shortcode() {
 		<p class="agh-note">Listings are drawn from current and recently available Cessna aircraft. Year, hours, equipment, condition, location and price are confirmed against the individual aircraft&rsquo;s documents when you request information. Nothing on this page is an offer, appraisal or airworthiness claim.</p>
 	</div>
 	</div>
-	<script>
+	<?php
+	return ob_get_clean();
+}
+add_shortcode( 'agh_aircraft', 'agh_aircraft_shortcode' );
+
+add_action( 'wp_footer', 'agh_aircraft_footer_js', 98 );
+function agh_aircraft_footer_js() {
+	if ( empty( $GLOBALS['agh_needs_aircraft_js'] ) ) { return; }
+	?>
+	<script id="agh-aircraft-js">
 	(function(){
 		var grid=document.getElementById('agh-ac-grid');if(!grid)return;
 		var cards=[].slice.call(grid.querySelectorAll('.agh-card'));
@@ -237,6 +247,4 @@ function agh_aircraft_shortcode() {
 	})();
 	</script>
 	<?php
-	return ob_get_clean();
 }
-add_shortcode( 'agh_aircraft', 'agh_aircraft_shortcode' );
